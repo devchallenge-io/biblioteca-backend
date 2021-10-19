@@ -1,0 +1,6 @@
+{
+  "types": {
+    "impr": "Improve a current implementation without adding a new feature or fixing a bug."
+  },
+  "debug": true
+}
