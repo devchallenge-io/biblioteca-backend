@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
+import { BookDTO } from 'App/Dto/BookDTO'
 import { Book } from 'App/Models/Book'
-
-type BookDTO = {
-  title: string
-  publisher: string
-  image: string
-  authors: string[]
-}
 
 export default class BooksRepository {
   books: Book[] = []

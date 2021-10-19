@@ -1,14 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-type BookDTO = {
-  title: string
-  publisher: string
-  image: string
-  authors: string[]
-}
-
-let id = 0
-
 export default class BooksController {
   public async index({}: HttpContextContract) {}
 
@@ -21,17 +12,4 @@ export default class BooksController {
   public async update({}: HttpContextContract) {}
 
   public async destroy({}: HttpContextContract) {}
-
-  private addBook({ authors, image, publisher, title }: BookDTO): Book[] {
-    id += 1
-    const book: Book = {
-      id,
-      titulo: title,
-      editora: publisher,
-      foto: image,
-      autores: authors,
-    }
-    books.push(book)
-    return books
-  }
 }
