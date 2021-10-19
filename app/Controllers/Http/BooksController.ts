@@ -1,13 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-type Book = {
-  id: number
-  titulo: string
-  editora: string
-  foto: string
-  autores: string[]
-}
-
 type BookDTO = {
   title: string
   publisher: string
@@ -16,7 +8,6 @@ type BookDTO = {
 }
 
 let id = 0
-let books: Book[] = []
 
 export default class BooksController {
   public async index({}: HttpContextContract) {}
