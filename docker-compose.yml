@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8081:80'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - dev-network
+
+  db:
+    image: mysql:8.0
+    platform: linux/amd64
+    ports:
+      - '3306:3306'
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime
+    networks:
+      - dev-network
+
+volumes:
+  db-data: {}
+
+networks:
+  dev-network:
+    driver: bridge
