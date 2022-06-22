@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 @Controller
 @RequestMapping("/obra")
 @AllArgsConstructor
@@ -24,7 +22,6 @@ public class ObraController {
 
     @GetMapping
     ResponseEntity<Page<ObraResponse>> findObras(Pageable pageable) {
-        System.out.println("ENtrou aqui");
         return ResponseEntity.status(HttpStatus.OK).body(service.findObras(pageable));
     }
 
@@ -41,12 +38,7 @@ public class ObraController {
 
     @DeleteMapping
     ResponseEntity<Object> deletarObra(@RequestParam Long id) {
-        try {
-            service.deletaObra(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        service.deletaObra(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

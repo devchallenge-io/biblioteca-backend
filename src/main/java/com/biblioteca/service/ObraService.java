@@ -23,19 +23,30 @@ public class ObraService {
     private ObraRepository repository;
 
     public ObraResponse registrarObra(ObraForm obraForm) {
-        Obra obra = ObraMapper.fromFormToEntity(obraForm);
-        return ObraResponseMapper.fromEntityToResponse(repository.save(obra));
+        try {
+            Obra obra = ObraMapper.fromFormToEntity(obraForm);
+            return ObraResponseMapper.fromEntityToResponse(repository.save(obra));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
-    public Page<ObraResponse> findObras(Pageable pageable){
-        return repository.findAll(pageable).map(ObraResponseMapper::fromEntityToResponse);
+    public Page<ObraResponse> findObras(Pageable pageable) {
+        try {
+            return repository.findAll(pageable).map(ObraResponseMapper::fromEntityToResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    public void atualizarObra(ObraForm obraForm){
+    public void atualizarObra(ObraForm obraForm) {
         try {
             Optional<Obra> obraInserida = repository.findById(obraForm.getId());
 
-            if (obraInserida.isPresent()){
+            if (obraInserida.isPresent()) {
                 Obra obra = obraInserida.get();
                 obra.setId(obraForm.getId());
                 obra.setAutor(obraForm.getAutor());
@@ -43,10 +54,10 @@ public class ObraService {
                 obra.setFoto(obraForm.getFoto());
                 obra.setEditora(obraForm.getEditora());
                 repository.save(obra);
-            }else{
+            } else {
                 throw new ResourceNotFoundException("Obra não encontrada.");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -55,12 +66,12 @@ public class ObraService {
     public void deletaObra(Long id) {
         try {
             Optional<Obra> obraInserida = repository.findById(id);
-            if (obraInserida.isPresent()){
+            if (obraInserida.isPresent()) {
                 repository.deleteById(id);
-            }else{
+            } else {
                 throw new ResourceNotFoundException("Obra não encontrada.");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
