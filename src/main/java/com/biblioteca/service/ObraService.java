@@ -7,6 +7,7 @@ import com.biblioteca.json.ObraResponse;
 import com.biblioteca.json.mapper.ObraResponseMapper;
 import com.biblioteca.persistence.ObraRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ObraService {
 
     @Autowired
@@ -27,6 +29,7 @@ public class ObraService {
             Obra obra = ObraMapper.fromFormToEntity(obraForm);
             return ObraResponseMapper.fromEntityToResponse(repository.save(obra));
         } catch (Exception e) {
+            log.error("Erro no registro de obra");
             e.printStackTrace();
             throw e;
         }
@@ -37,6 +40,7 @@ public class ObraService {
         try {
             return repository.findAll(pageable).map(ObraResponseMapper::fromEntityToResponse);
         } catch (Exception e) {
+            log.error("Erro ao encontrar obras");
             e.printStackTrace();
             throw e;
         }
@@ -58,6 +62,7 @@ public class ObraService {
                 throw new ResourceNotFoundException("Obra não encontrada.");
             }
         } catch (Exception e) {
+            log.error("Erro ao atualizar obra.");
             e.printStackTrace();
             throw e;
         }
@@ -72,6 +77,7 @@ public class ObraService {
                 throw new ResourceNotFoundException("Obra não encontrada.");
             }
         } catch (Exception e) {
+            log.error("Erro ao deletar registro de obra");
             e.printStackTrace();
             throw e;
         }
