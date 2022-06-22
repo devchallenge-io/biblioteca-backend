@@ -8,7 +8,12 @@ import com.biblioteca.json.mapper.ObraResponseMapper;
 import com.biblioteca.persistence.ObraRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,5 +25,44 @@ public class ObraService {
     public ObraResponse registrarObra(ObraForm obraForm) {
         Obra obra = ObraMapper.fromFormToEntity(obraForm);
         return ObraResponseMapper.fromEntityToResponse(repository.save(obra));
+    }
+
+    public Page<ObraResponse> findObras(Pageable pageable){
+        return repository.findAll(pageable).map(ObraResponseMapper::fromEntityToResponse);
+    }
+
+    public void atualizarObra(ObraForm obraForm){
+        try {
+            Optional<Obra> obraInserida = repository.findById(obraForm.getId());
+
+            if (obraInserida.isPresent()){
+                Obra obra = obraInserida.get();
+                obra.setId(obraForm.getId());
+                obra.setAutor(obraForm.getAutor());
+                obra.setTitulo(obraForm.getTitulo());
+                obra.setFoto(obraForm.getFoto());
+                obra.setEditora(obraForm.getEditora());
+                repository.save(obra);
+            }else{
+                throw new ResourceNotFoundException("Obra não encontrada.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void deletaObra(Long id) {
+        try {
+            Optional<Obra> obraInserida = repository.findById(id);
+            if (obraInserida.isPresent()){
+                repository.deleteById(id);
+            }else{
+                throw new ResourceNotFoundException("Obra não encontrada.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
