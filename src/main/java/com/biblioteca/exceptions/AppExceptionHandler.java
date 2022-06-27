@@ -16,73 +16,49 @@ import java.time.LocalDateTime;
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException rfnException) {
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
 
-        MessageResponse rnfDetails = MessageResponse.MessageResponseBuilder
-                .newBuilder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .title("Resource not found.")
-                .detail(rfnException.getMessage())
-                .message(rfnException.getClass().getName())
-                .build();
-        return new ResponseEntity<>(rnfDetails, HttpStatus.NOT_FOUND);
+        MessageResponse eDetails = this.generateResponse(e, HttpStatus.NOT_FOUND, "Resource not found.");
+        return new ResponseEntity<>(eDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ServletException.class)
     public ResponseEntity<?> handleServletException(ServletException e) {
 
-        MessageResponse eDetails = MessageResponse.MessageResponseBuilder
-                .newBuilder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .title("Difficulties found.")
-                .detail(e.getMessage())
-                .message(e.getClass().getName())
-                .build();
+        MessageResponse eDetails = this.generateResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, "Difficulties found.");
         return new ResponseEntity<>(eDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(PropertyReferenceException.class)
     public ResponseEntity<?> handlePropertyReferenceException(PropertyReferenceException e) {
 
-        MessageResponse eDetails = MessageResponse.MessageResponseBuilder
-                .newBuilder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("Check request's information.")
-                .detail(e.getMessage())
-                .message(e.getClass().getName())
-                .build();
+        MessageResponse eDetails = this.generateResponse(e, HttpStatus.BAD_REQUEST, "Check request's information.");
         return new ResponseEntity<>(eDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException e) {
 
-        MessageResponse eDetails = MessageResponse.MessageResponseBuilder
-                .newBuilder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("Constraint violations.")
-                .detail(e.getMessage())
-                .message(e.getClass().getName())
-                .build();
+        MessageResponse eDetails = this.generateResponse(e, HttpStatus.BAD_REQUEST, "Constraint violations.");
         return new ResponseEntity<>(eDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e) {
 
-        MessageResponse eDetails = MessageResponse.MessageResponseBuilder
+        MessageResponse eDetails = this.generateResponse(e, HttpStatus.BAD_REQUEST, "A method has been passed an illegal or inappropriate argument.");
+        return new ResponseEntity<>(eDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    public MessageResponse generateResponse(Exception e, HttpStatus status, String message) {
+        return MessageResponse.MessageResponseBuilder
                 .newBuilder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("A method has been passed an illegal or inappropriate argument.")
+                .status(status.value())
+                .title(message)
                 .detail(e.getMessage())
                 .message(e.getClass().getName())
                 .build();
-        return new ResponseEntity<>(eDetails, HttpStatus.BAD_REQUEST);
     }
 
 }
