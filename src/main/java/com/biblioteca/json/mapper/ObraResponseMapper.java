@@ -13,4 +13,7 @@ public class ObraResponseMapper {
                 .autor(obra.getAutor())
                 .build();
     }
+
+    private ObraResponseMapper() {
+    }
 }
