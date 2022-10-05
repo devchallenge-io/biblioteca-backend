@@ -2,6 +2,7 @@ package com.biblioteca.service;
 
 import com.biblioteca.entities.Obra;
 import com.biblioteca.entities.mapper.ObraMapper;
+import com.biblioteca.exceptions.RequestException;
 import com.biblioteca.json.ObraForm;
 import com.biblioteca.json.ObraResponse;
 import com.biblioteca.json.mapper.ObraResponseMapper;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,16 +26,16 @@ public class ObraService {
     @Autowired
     private ObraRepository repository;
 
+    public static final String OBRA_NAO_ENCONTRADA = "Obra não encontrada.";
+
     public ObraResponse registrarObra(ObraForm obraForm) {
         try {
             Obra obra = ObraMapper.fromFormToEntity(obraForm);
             return ObraResponseMapper.fromEntityToResponse(repository.save(obra));
         } catch (Exception e) {
-            log.error("Erro no registro de obra");
-            e.printStackTrace();
-            throw e;
+            log.error("Erro no registro de obra. ", e.getMessage());
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Erro no registro de obra.");
         }
-
     }
 
     public Page<ObraResponse> findObras(Pageable pageable) {
@@ -41,8 +43,7 @@ public class ObraService {
             return repository.findAll(pageable).map(ObraResponseMapper::fromEntityToResponse);
         } catch (Exception e) {
             log.error("Erro ao encontrar obras");
-            e.printStackTrace();
-            throw e;
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Erro ao encontrar obras.");
         }
     }
 
@@ -59,12 +60,14 @@ public class ObraService {
                 obra.setEditora(obraForm.getEditora());
                 repository.save(obra);
             } else {
-                throw new ResourceNotFoundException("Obra não encontrada.");
+                throw new ResourceNotFoundException(OBRA_NAO_ENCONTRADA);
             }
+        } catch (ResourceNotFoundException exception) {
+            log.error(OBRA_NAO_ENCONTRADA);
+            throw new RequestException(HttpStatus.BAD_REQUEST, OBRA_NAO_ENCONTRADA);
         } catch (Exception e) {
             log.error("Erro ao atualizar obra.");
-            e.printStackTrace();
-            throw e;
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Erro ao atualizar obra.");
         }
     }
 
@@ -74,12 +77,11 @@ public class ObraService {
             if (obraInserida.isPresent()) {
                 repository.deleteById(id);
             } else {
-                throw new ResourceNotFoundException("Obra não encontrada.");
+                throw new ResourceNotFoundException(OBRA_NAO_ENCONTRADA);
             }
         } catch (Exception e) {
-            log.error("Erro ao deletar registro de obra");
-            e.printStackTrace();
-            throw e;
+            log.error("Erro ao deletar registro de obra.");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Erro ao deletar registro de obra.");
         }
     }
 }
