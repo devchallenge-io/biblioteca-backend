@@ -12,12 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,20 +68,35 @@ class ObraServiceTest {
         assertNotNull(exception);
     }
 
-//    @Test
-//    void testFindObras(){
-////        PagedListHolder page = new PagedListHolder(getObraList());
-//        doReturn(convertToPage(getObraList(),PageRequest.of(0,10))).when(repository).findAll(PageRequest.of(0,10)).map(ObraResponseMapper::fromEntityToResponse);
-//        Page<ObraResponse> findObras = service.findObras(PageRequest.of(0,10));
-//        assertNotNull(findObras);
-//        verify(repository).findAll(PageRequest.of(0,10)).map(ObraResponseMapper::fromEntityToResponse);
-//    }
+    @Test
+    void testFindObras() {
+        doReturn(getObraList()).when(repository).findAll();
+        List<Obra> obras = service.findObras();
+        assertNotNull(obras);
+        verify(repository).findAll();
+    }
+
+    @Test
+    void testFindObrasException() {
+        doThrow(RequestException.class).when(repository).findAll();
+        Exception exception = assertThrows(Exception.class, () -> service.findObras());
+        assertEquals("Erro ao encontrar obras.", exception.getMessage());
+    }
+
+    @Test
+    void testFindObra(){
+        doReturn(getObraOptional()).when(repository).findById(ID);
+        Optional<ObraResponse> obra = service.findObra(ID);
+        assertNotNull(obra);
+    }
 
     @Test
     void testAtualizarObra() {
         doReturn(getObraOptional()).when(repository).findById(getObraForm().getId());
-        service.atualizarObra(getObraForm());
+        String atualizacao = service.atualizarObra(getObraForm());
         verify(repository).findById(getObraForm().getId());
+        assertEquals("Obra atualizada.", atualizacao);
+
     }
 
     @Test
@@ -114,7 +125,7 @@ class ObraServiceTest {
     void testDeletaObraNaoExistente() {
         doThrow(ResourceNotFoundException.class).when(repository).findById(ID);
         Exception exception = assertThrows(Exception.class, () -> service.deletaObra(ID));
-        assertNotNull(exception);
+        assertEquals("Obra não encontrada.", exception.getMessage());
     }
 
     @Test
@@ -175,13 +186,7 @@ class ObraServiceTest {
                 .autor(AUTOR)
                 .titulo(TITULO)
                 .editora(EDITORA)
+                .foto(FOTO)
                 .build());
-    }
-
-    public static <T> Page<T> convertToPage(List<T> objectList, Pageable pageable) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), objectList.size());
-        List<T> subList = start >= end ? new ArrayList<>() : objectList.subList(start, end);
-        return new PageImpl<>(subList, pageable, objectList.size());
     }
 }

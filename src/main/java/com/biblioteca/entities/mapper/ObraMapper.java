@@ -13,4 +13,7 @@ public class ObraMapper {
                 .autor(obraForm.getAutor())
                 .build();
     }
+
+    private ObraMapper(){}
+
 }
