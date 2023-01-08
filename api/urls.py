@@ -6,4 +6,4 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('obras/', obras_view.ObrasCriarListar.as_view()),
     path('obras/<int:id>', obras_view.ObrasEditarDeletar.as_view()),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
