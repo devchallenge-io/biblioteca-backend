@@ -1,7 +1,5 @@
 from django.urls import path
 from .views import obras_view
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('obras/', obras_view.ObrasCriarListar.as_view()),
