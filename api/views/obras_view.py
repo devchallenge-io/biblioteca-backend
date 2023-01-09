@@ -28,7 +28,7 @@ class ObrasCriarListar(APIView):
     
     def get(self, request):
         obras = obras_service.listar_obras()
-        serializer = ObrasSerializer(obras, many = True)
+        serializer = ObrasSerializer(obras, context = {'request': request}, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
 class ObrasEditarDeletar(APIView):
