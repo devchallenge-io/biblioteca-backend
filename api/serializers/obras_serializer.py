@@ -11,6 +11,12 @@ class ObrasSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         request = self.context['request']
         return {
-            'delete': reverse('obras-detalhes', kwargs = {'id': obj.id}, request = request),
-            'put': reverse('obras-detalhes', kwargs = {'id': obj.id}, request = request),
+            'delete': reverse('obras-detalhes', kwargs = {'id': obj.pk}, request = request),
+            'put': reverse('obras-detalhes', kwargs = {'id': obj.pk}, request = request),
         }
+
+
+class ObrasSerializerCadastro(serializers.ModelSerializer):
+    class Meta:
+        model = Obras
+        fields = ('id','titulo', 'editora', 'foto', 'autores')

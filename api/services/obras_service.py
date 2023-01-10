@@ -8,7 +8,7 @@ def listar_obra_id(id):
     return get_object_or_404(Obras, id=id)
 
 def criar_obra(obra):
-    Obras.objects.create(
+    return Obras.objects.create(
         titulo = obra.titulo,
         editora = obra.editora,
         foto = obra.foto,

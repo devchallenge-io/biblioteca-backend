@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from ..serializers.obras_serializer import ObrasSerializer
+from ..serializers.obras_serializer import ObrasSerializer, ObrasSerializerCadastro
 from ..services import obras_service
 from ..entidades.obras import Obras
 from ..pagination import PaginationCustomizada
@@ -9,7 +9,7 @@ from ..pagination import PaginationCustomizada
 
 class ObrasCriarListar(APIView):
     def post(self, request):
-        serializer = ObrasSerializer(data = request.data)
+        serializer = ObrasSerializerCadastro(data = request.data)
         if serializer.is_valid():
             titulo = serializer.validated_data['titulo']
             editora = serializer.validated_data['editora']
@@ -41,7 +41,7 @@ class ObrasEditarDeletar(APIView):
 
     def put(self, request, id):
         obra = obras_service.listar_obra_id(id)
-        serializer = ObrasSerializer(obra, data = request.data)
+        serializer = ObrasSerializer(obra, context = {'request': request}, data = request.data)
         if serializer.is_valid():
             titulo = serializer.validated_data['titulo']
             editora = serializer.validated_data['editora']
